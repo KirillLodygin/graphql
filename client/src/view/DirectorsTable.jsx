@@ -53,7 +53,7 @@ const DirectorsTable = ({onOpen, onClose}) => {
 	};
 
 	const handleClick = ({currentTarget}, data) => {
-		this.setState({
+		setState({
 			anchorEl: currentTarget,
 			data,
 		});
