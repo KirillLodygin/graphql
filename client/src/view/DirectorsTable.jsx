@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 import {useQuery} from '@apollo/client';
-import {DIRECTORS_QUERY} from '../queries/directorsQueries';
+import {DIRECTORS_QUERY} from '../queries/directorsQuery';
 
 import DirectorsDialog from './DirectorsDialog';
 

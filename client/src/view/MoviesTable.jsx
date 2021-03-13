@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 import {useQuery} from '@apollo/client';
-import {MOVIES_QUERY} from '../queries/moviesQueries';
+import {MOVIES_QUERY} from '../queries/moviesQuery';
 
 import MoviesDialog from './MoviesDialog';
 
