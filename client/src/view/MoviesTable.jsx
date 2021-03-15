@@ -14,8 +14,6 @@ import {
 	CircularProgress
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
-import {useQuery} from '@apollo/client';
-import {MOVIES_QUERY} from '../queries/moviesQuery';
 
 import MoviesDialog from './MoviesDialog';
 
@@ -34,10 +32,8 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const MoviesTable = ({onOpen}) => {
+const MoviesTable = ({onOpen, loading, movies}) => {
 	const styles = useStyles();
-	const {loading, data = {}} = useQuery(MOVIES_QUERY);
-	const {movies = []} = data;
 
 	const [state, setState] = useState(
 		{

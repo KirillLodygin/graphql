@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {InputBase, makeStyles} from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 

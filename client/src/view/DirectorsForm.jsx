@@ -1,6 +1,8 @@
 import React from 'react';
+import {useMutation} from '@apollo/client';
 import {TextField, Button, DialogTitle, Dialog, makeStyles} from '@material-ui/core';
 import {Save} from '@material-ui/icons';
+import { ADD_DIRECTOR_MUTATION } from '../mutations/directorMutations';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -29,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 	const styles = useStyles();
+	const [addDirector, {}] = useMutation(ADD_DIRECTOR_MUTATION);
 
 	const handleClose = () => {
 		onClose();
@@ -36,9 +39,11 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 
 	const handleSave = () => {
 		const { id, name, age } = selectedValue;
+		if (name) addDirector({variables: { name, age: Number(age) }});
 		onClose();
 	};
 
+	if(!selectedValue.age) selectedValue.age = 0;
 	const { name, age } = selectedValue;
 
 	return (

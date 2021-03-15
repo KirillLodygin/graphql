@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Fab, makeStyles} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
+import {useQuery} from '@apollo/client';
+import {DIRECTORS_QUERY} from '../queries/directorsQuery';
 
 import DirectorsTable from './DirectorsTable';
 import DirectorsForm from './DirectorsForm';
@@ -19,12 +21,12 @@ const useStyles = makeStyles(() => ({
 
 const Directors = () => {
 	const styles = useStyles();
+	const {loading, data = {}} = useQuery(DIRECTORS_QUERY);
+	const {directors = []} = data;
 
 	const [state, setState] = useState(
 		{
-			open: false,
-			name: '',
-			age: 0,
+			open: false
 		}
 	);
 
@@ -40,7 +42,7 @@ const Directors = () => {
 	};
 
 	const handleChange = name => ({ target }) => {
-		setState({ [name]: target.value });
+		setState({...state, [name]: target.value });
 	};
 
 	const { id, name, age, open } = state;
@@ -53,7 +55,11 @@ const Directors = () => {
 				open={open}
 				onClose={handleClose} />
 			<div className={styles.wrapper}>
-				<DirectorsTable onOpen={handleClickOpen} onClose={handleClose} />
+				<DirectorsTable
+					onOpen={handleClickOpen}
+					onClose={handleClose}
+					loading={loading}
+					directors={directors} />
 				<Fab onClick={() => handleClickOpen(null)} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>
 				</Fab>

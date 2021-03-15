@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Fab, makeStyles} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
+import {useQuery} from '@apollo/client';
+import {MOVIES_QUERY} from '../queries/moviesQuery';
 
 import MoviesTable from './MoviesTable';
 import MoviesForm from './MoviesForm';
@@ -19,6 +21,8 @@ const useStyles = makeStyles(() => ({
 
 const Movies = () => {
 	const styles = useStyles();
+	const {loading, data = {}} = useQuery(MOVIES_QUERY);
+	const {movies = []} = data;
 
 	const [state, setState] = useState(
 		{
@@ -59,7 +63,7 @@ const Movies = () => {
 	};
 
 	const handleChange = name => ({ target }) => {
-		setState({ [name]: target.value });
+		setState({...state, [name]: target.value });
 	};
 
 	const { id, name, genre, watched, rate, directorId, open } = state;
@@ -75,7 +79,12 @@ const Movies = () => {
 				onClose={handleClose}
 			/>
 			<div className={styles.wrapper}>
-				<MoviesTable onOpen={handleClickOpen} onClose={handleClose} />
+				<MoviesTable
+					onOpen={handleClickOpen}
+					onClose={handleClose}
+					movies={movies}
+					loading={loading}
+				/>
 				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>
 				</Fab>

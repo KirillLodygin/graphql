@@ -13,8 +13,6 @@ import {
 	makeStyles
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
-import {useQuery} from '@apollo/client';
-import {DIRECTORS_QUERY} from '../queries/directorsQuery';
 
 import DirectorsDialog from './DirectorsDialog';
 
@@ -33,10 +31,8 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const DirectorsTable = ({onOpen, onClose}) => {
+const DirectorsTable = ({onOpen, onClose, loading, directors}) => {
 	const styles = useStyles();
-	const {loading, data = {}} = useQuery(DIRECTORS_QUERY);
-	const {directors = []} = data;
 
 	const [state, setState] = useState(
 		{
