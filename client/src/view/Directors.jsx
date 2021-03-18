@@ -30,6 +30,7 @@ const Directors = () => {
 		}
 	);
 
+
 	const handleClickOpen = (data) => {
 		setState({
 			open: true,
@@ -45,7 +46,7 @@ const Directors = () => {
 		setState({...state, [name]: target.value });
 	};
 
-	const { id, name, age, open } = state;
+	const { id, name, age = 0, open } = state;
 
 	return (
 		<>

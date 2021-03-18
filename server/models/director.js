@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const directorSchema = new Schema({
 	name: String,
 	age: Number,
+}, {
+	versionKey: false
 });
 
 module.exports = mongoose.model('Director', directorSchema);
