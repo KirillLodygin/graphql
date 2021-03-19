@@ -50,7 +50,6 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 	const ucFirst = (str) => {
 		if (!str) return str;
 		let arr = str.split(' ');
-		console.log(arr);
 		return arr.map(item => (item === "") ? item : item[0].toUpperCase() + item.slice(1)).join(' ');
 	};
 
