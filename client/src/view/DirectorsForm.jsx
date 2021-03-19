@@ -2,7 +2,7 @@ import React from 'react';
 import {useMutation} from '@apollo/client';
 import {TextField, Button, DialogTitle, Dialog, makeStyles} from '@material-ui/core';
 import {Save} from '@material-ui/icons';
-import { ADD_DIRECTOR_MUTATION } from '../mutations/directorMutations';
+import { ADD_DIRECTOR_MUTATION } from '../mutations/directorsMutations';
 import {DIRECTORS_QUERY} from "../queries/directorsQuery";
 
 const useStyles = makeStyles((theme) => ({
