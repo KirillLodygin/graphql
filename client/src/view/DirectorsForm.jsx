@@ -47,6 +47,13 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 		onClose();
 	};
 
+	const ucFirst = (str) => {
+		if (!str) return str;
+		let arr = str.split(' ');
+		console.log(arr);
+		return arr.map(item => (item === "") ? item : item[0].toUpperCase() + item.slice(1)).join(' ');
+	};
+
 	const { name, age } = selectedValue;
 
 	return (
@@ -57,7 +64,7 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 					id="outlined-name"
 					label="Name"
 					className={styles.textField}
-					value={name}
+					value={ucFirst(name)}
 					onChange={handleChange('name')}
 					margin="normal"
 					variant="outlined"
@@ -66,7 +73,7 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 					id="outlined-rate"
 					label="Age"
 					className={styles.textField}
-					value={age}
+					value={Math.abs(age)}
 					onChange={handleChange('age')}
 					type="number"
 					margin="normal"
