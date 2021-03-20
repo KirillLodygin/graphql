@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Fab, makeStyles} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
-import {useQuery} from '@apollo/client';
-import {MOVIES_QUERY} from '../queries/moviesQuery';
+import {useQuery} from "@apollo/client";
+import {DIRECTORS_QUERY} from '../queries/directorsForMovies'
 
 import MoviesTable from './MoviesTable';
 import MoviesForm from './MoviesForm';
@@ -21,17 +21,12 @@ const useStyles = makeStyles(() => ({
 
 const Movies = () => {
 	const styles = useStyles();
-	const {loading, data = {}} = useQuery(MOVIES_QUERY);
-	const {movies = []} = data;
+	const {data = {}} = useQuery(DIRECTORS_QUERY);
+	const { directors = [] } = data;
 
 	const [state, setState] = useState(
 		{
 			open: false,
-			name: '',
-			genre: '',
-			watched: false,
-			rate: 0,
-			directorId: '',
 		}
 	);
 
@@ -55,18 +50,18 @@ const Movies = () => {
 	};
 
 	const handleSelectChange = ({ target }) => {
-		setState({ [target.name]: target.value });
+		setState({...state, [target.name]: target.value });
 	};
 
 	const handleCheckboxChange = name => ({ target }) => {
-		setState({ [name]: target.checked });
+		setState({...state, [name]: target.checked });
 	};
 
 	const handleChange = name => ({ target }) => {
 		setState({...state, [name]: target.value });
 	};
 
-	const { id, name, genre, watched, rate, directorId, open } = state;
+	const { id, name, genre, watched = false, rate = 0, directorId, open } = state;
 
 	return (
 		<>
@@ -77,13 +72,12 @@ const Movies = () => {
 				selectedValue={{ id, name, genre, watched, rate, directorId }}
 				open={open}
 				onClose={handleClose}
+				directors={directors}
 			/>
 			<div className={styles.wrapper}>
 				<MoviesTable
 					onOpen={handleClickOpen}
 					onClose={handleClose}
-					movies={movies}
-					loading={loading}
 				/>
 				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>

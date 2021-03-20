@@ -15,6 +15,8 @@ import {
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 
 import DirectorsDialog from './DirectorsDialog';
+import {useQuery} from "@apollo/client";
+import {DIRECTORS_QUERY} from "../queries/directorsQuery";
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -31,8 +33,11 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const DirectorsTable = ({onOpen, onClose, loading, directors}) => {
+const DirectorsTable = ({onOpen, onClose}) => {
 	const styles = useStyles();
+
+	const {loading, data = {}} = useQuery(DIRECTORS_QUERY);
+	const {directors = []} = data;
 
 	const [state, setState] = useState(
 		{

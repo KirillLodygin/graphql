@@ -14,11 +14,9 @@ import {
 	makeStyles
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-
-const directors = [
-	{ id: 1, name: 'Quentin Tarantino', age: 55, movies: [ { name: 'Movie 1' }, { name: 'Movie 2' } ] },
-	{ id: 2, name: 'Guy Ritchie', age: 50, movies: [ { name: 'Movie 1' }, { name: 'Movie 2' } ] }
-];
+import {useMutation} from '@apollo/client'
+import { ADD_MOVIE_MUTATION } from '../mutations/moviesMutations';
+import { MOVIES_QUERY } from '../queries/moviesQuery';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -47,8 +45,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChange, selectedValue = {}, onClose}) => {
+const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChange, selectedValue = {}, onClose, directors}) => {
 	const styles = useStyles();
+
+	const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
+		refetchQueries: [{ query: MOVIES_QUERY }],
+		awaitRefetchQueries: true,
+	});
 
 	const handleClose = () => {
 		onClose();
@@ -56,7 +59,21 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 
 	const handleSave = () => {
 		const { id, name, genre, rate, directorId, watched } = selectedValue;
-		onClose();
+		if (name && genre && directorId) {
+			addMovie({variables:{ id, name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }});
+			onClose();
+		}
+	};
+
+	const ucFirst = (str) => {
+		if (!str) return str;
+		return str[0].toUpperCase() + str.slice(1);
+	};
+
+	const ucFirstGenre = (str) => {
+		if (!str) return str;
+		let arr = str.split('-');
+		return arr.map(item => (item === "") ? item : item[0].toUpperCase() + item.slice(1)).join('-');
 	};
 
 	const { name, genre, rate, directorId, watched } = selectedValue;
@@ -69,7 +86,7 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 					id="outlined-name"
 					label="Name"
 					className={styles.textField}
-					value={name}
+					value={ucFirst(name)}
 					onChange={handleChange('name')}
 					margin="normal"
 					variant="outlined"
@@ -78,7 +95,7 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 					id="outlined-genre"
 					label="Genre"
 					className={styles.textField}
-					value={genre}
+					value={ucFirstGenre(genre)}
 					onChange={handleChange('genre')}
 					margin="normal"
 					variant="outlined"
@@ -86,7 +103,7 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 				<TextField
 					id="outlined-rate"
 					label="Rate"
-					value={rate}
+					value={Math.abs(rate)}
 					onChange={handleChange('rate')}
 					type="number"
 					className={styles.textField}
@@ -95,7 +112,6 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 				/>
 				<FormControl variant="outlined" className={styles.formControlSelect}>
 					<InputLabel
-						/*ref={ref => { this.InputLabelRef = ref; }}*/
 						htmlFor="outlined-age-simple"
 					>
 						Director

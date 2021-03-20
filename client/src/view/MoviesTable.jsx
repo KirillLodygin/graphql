@@ -16,6 +16,8 @@ import {
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 
 import MoviesDialog from './MoviesDialog';
+import {useQuery} from "@apollo/client";
+import {MOVIES_QUERY} from "../queries/moviesQuery";
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -32,8 +34,11 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const MoviesTable = ({onOpen, loading, movies}) => {
+const MoviesTable = ({onOpen}) => {
 	const styles = useStyles();
+
+	const {loading, data = {}} = useQuery(MOVIES_QUERY);
+	const {movies = []} = data;
 
 	const [state, setState] = useState(
 		{

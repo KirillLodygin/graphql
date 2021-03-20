@@ -43,8 +43,10 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 
 	const handleSave = () => {
 		const { id, name, age } = selectedValue;
-		if (name) {addDirector({variables: { name, age: Number(age) }});}
-		onClose();
+		if (name) {
+			addDirector({variables: { name, age: Number(age) }});
+			onClose();
+		}
 	};
 
 	const ucFirst = (str) => {
