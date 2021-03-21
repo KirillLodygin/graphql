@@ -57,6 +57,7 @@ const Movies = () => {
 		setState({...state, [name]: target.checked });
 	};
 
+
 	const handleChange = name => ({ target }) => {
 		setState({...state, [name]: target.value });
 	};
@@ -67,8 +68,8 @@ const Movies = () => {
 		<>
 			<MoviesForm
 				handleChange={handleChange}
-				handleSelectChange={handleSelectChange}
 				handleCheckboxChange={handleCheckboxChange}
+				handleSelectChange={handleSelectChange}
 				selectedValue={{ id, name, genre, watched, rate, directorId }}
 				open={open}
 				onClose={handleClose}
