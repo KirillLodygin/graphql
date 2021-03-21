@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
 	fab: {
 		position: 'absolute',
 		bottom: 0,
-		right: 0,
+		right: '60px',
 	},
 }));
 

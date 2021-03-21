@@ -40,46 +40,46 @@ const MoviesTable = ({onOpen}) => {
 	const {loading, data = {}} = useQuery(MOVIES_QUERY);
 	const {movies = []} = data;
 
-	const [state, setState] = useState(
+	const [dialogState, setDialogState] = useState(
 		{
-			anchorEl: null,
-			openDialog: false,
+			anchorEl: null
 		}
 	);
 
-	const handleDialogOpen = () => {
-		setState({openDialog: true});
-	};
-	const handleDialogClose = () => {
-		setState({openDialog: false});
+	const [openDialogState, setOpenDialogState] = useState(false);
+
+	const changeDialogOpenState = () => {
+		setOpenDialogState(!openDialogState);
 	};
 
+
 	const handleClick = ({currentTarget}, data) => {
-		setState({
+		setDialogState({
+			...dialogState,
 			anchorEl: currentTarget,
 			data,
 		});
 	};
 
 	const handleClose = () => {
-		setState({anchorEl: null});
+		setDialogState({...dialogState, anchorEl: null});
 	};
 
 	const handleEdit = () => {
-		onOpen(state.data);
+		onOpen(dialogState.data);
 		handleClose();
 	};
 
 	const handleDelete = () => {
-		handleDialogOpen();
+		changeDialogOpenState();
 		handleClose();
 	};
 
-	const {anchorEl, openDialog, data: activeElem = {}} = state;
+	const {anchorEl, data: activeElem = {}} = dialogState;
 
 	return (
 		<>
-			<MoviesDialog open={openDialog} handleClose={handleDialogClose} id={activeElem.id}/>
+			<MoviesDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{
 					loading ?

@@ -7,3 +7,11 @@ export const ADD_MOVIE_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_MOVIE_MUTATION = gql`
+  mutation deleteMovie($id: ID) {
+    deleteMovie(id: $id) {
+      id
+    }
+  }
+`;

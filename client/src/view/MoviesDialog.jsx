@@ -1,9 +1,24 @@
 import React from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import {DeleteForever, Block} from '@material-ui/icons';
+import {useMutation} from '@apollo/client';
+import { DELETE_MOVIE_MUTATION } from '../mutations/moviesMutations';
+import { MOVIES_QUERY } from '../queries/moviesQuery';
+import { DIRECTORS_QUERY } from '../queries/directorsQuery';
 
 const MoviesDialog = ({open, handleClose, id}) => {
+	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
+		optimisticResponse: true,
+		refetchQueries: [{ query: MOVIES_QUERY }, { query: DIRECTORS_QUERY}],
+		awaitRefetchQueries: true,
+	});
+
 	const handleDelete = () => {
+		delMovie({variables:{id: id}});
+		handleClose();
+	};
+
+	const onClickAction = () => {
 		handleClose();
 	};
 
@@ -21,7 +36,7 @@ const MoviesDialog = ({open, handleClose, id}) => {
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose} color="primary">
+				<Button onClick={onClickAction} color="primary">
 					<Block /> Cancel
 				</Button>
 				<Button onClick={handleDelete} color="primary" autoFocus>
