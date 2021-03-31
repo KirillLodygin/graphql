@@ -17,7 +17,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import {useMutation} from '@apollo/client';
 import { ADD_MOVIE_MUTATION } from '../mutations/moviesMutations';
 import { MOVIES_QUERY } from '../queries/moviesQuery';
-import { DIRECTORS_QUERY } from '../queries/directorsQuery';
+import { DIRECTORS_QUERY } from '../queries/directorsForMovies';
 
 const useStyles = makeStyles((theme) => ({
 	container: {
