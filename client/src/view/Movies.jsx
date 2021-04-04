@@ -78,7 +78,6 @@ const Movies = () => {
 			<div className={styles.wrapper}>
 				<MoviesTable
 					onOpen={handleClickOpen}
-					onClose={handleClose}
 				/>
 				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>

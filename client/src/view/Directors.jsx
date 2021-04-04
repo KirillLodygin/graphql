@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 	fab: {
 		position: 'absolute',
 		bottom: 0,
-		right: 0,
+		right: '60px',
 	},
 }));
 
@@ -25,7 +25,6 @@ const Directors = () => {
 			open: false
 		}
 	);
-
 
 	const handleClickOpen = (data) => {
 		setState({
@@ -54,7 +53,6 @@ const Directors = () => {
 			<div className={styles.wrapper}>
 				<DirectorsTable
 					onOpen={handleClickOpen}
-					onClose={handleClose}
 				/>
 				<Fab onClick={() => handleClickOpen(null)} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>

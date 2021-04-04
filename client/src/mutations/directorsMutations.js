@@ -7,3 +7,11 @@ export const ADD_DIRECTOR_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_DIRECTOR_MUTATION = gql`
+  mutation deleteDirector($id: ID) {
+    deleteDirector(id: $id) {
+      id
+    }
+  }
+`;

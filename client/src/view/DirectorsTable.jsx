@@ -33,52 +33,52 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const DirectorsTable = ({onOpen, onClose}) => {
+const DirectorsTable = ({onOpen}) => {
 	const styles = useStyles();
 
 	const {loading, data = {}} = useQuery(DIRECTORS_QUERY);
 	const {directors = []} = data;
 
-	const [state, setState] = useState(
+
+	const [dialogState, setDialogState] = useState(
 		{
 			anchorEl: null,
-			openDialog: false,
 		}
 	);
 
-	const handleDialogOpen = () => {
-		setState({openDialog: true});
-	};
-	const handleDialogClose = () => {
-		setState({openDialog: false});
+	const [openDialogState, setOpenDialogState] = useState(false);
+
+	const changeDialogOpenState = () => {
+		setOpenDialogState(!openDialogState);
 	};
 
 	const handleClick = ({currentTarget}, data) => {
-		setState({
+		setDialogState({
+			...dialogState,
 			anchorEl: currentTarget,
 			data,
 		});
 	};
 
 	const handleClose = () => {
-		setState({anchorEl: null});
+		setDialogState({...dialogState, anchorEl: null});
 	};
 
-	const handleEdit = (row) => {
-		onOpen(state.data);
+	const handleEdit = () => {
+		onOpen(dialogState.data);
 		handleClose();
 	};
 
 	const handleDelete = () => {
-		handleDialogOpen();
+		changeDialogOpenState();
 		handleClose();
 	};
 
-	const {anchorEl, openDialog, data: activeElem = {}} = state;
+	const {anchorEl, data: activeElem = {}} = dialogState;
 
 	return (
 		<>
-			<DirectorsDialog open={openDialog} handleClose={handleDialogClose} id={activeElem.id}/>
+			<DirectorsDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{
 					loading ?

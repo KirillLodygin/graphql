@@ -16,8 +16,9 @@ import {
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 
 import MoviesDialog from './MoviesDialog';
-import {useQuery} from "@apollo/client";
+import {useQuery, useMutation} from "@apollo/client";
 import {MOVIES_QUERY} from "../queries/moviesQuery";
+import { DELETE_MOVIE_MUTATION } from '../mutations/moviesMutations';
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -36,9 +37,17 @@ const useStyles = makeStyles((theme) => ({
 
 const MoviesTable = ({onOpen}) => {
 	const styles = useStyles();
+	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
+		optimisticResponse: true,
+		awaitRefetchQueries: true,
+	});
 
 	const {loading, data = {}} = useQuery(MOVIES_QUERY);
 	const {movies = []} = data;
+	movies.forEach(movie => {
+		if (movie.director === null) delMovie({variables:{id: movie.id}});
+	});
+	const moviesForTable = movies.filter(movie => movie.director !== null);
 
 	const [dialogState, setDialogState] = useState(
 		{
@@ -97,7 +106,7 @@ const MoviesTable = ({onOpen}) => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{movies.map(movie => {
+								{moviesForTable.map(movie => {
 									return (
 										<TableRow key={movie.id}>
 											<TableCell component="th" scope="row">{movie.name}</TableCell>
