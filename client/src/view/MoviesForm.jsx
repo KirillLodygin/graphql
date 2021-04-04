@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import {useMutation} from '@apollo/client';
-import { ADD_MOVIE_MUTATION } from '../mutations/moviesMutations';
+import { ADD_MOVIE_MUTATION, UPDATE_MOVIE_MUTATION } from '../mutations/moviesMutations';
 import { MOVIES_QUERY } from '../queries/moviesQuery';
 import { DIRECTORS_QUERY } from '../queries/directorsQuery';
 
@@ -50,7 +50,14 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 	const styles = useStyles();
 
 	const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
-		refetchQueries: [{ query: MOVIES_QUERY }, { query: DIRECTORS_QUERY}],
+		optimisticResponse: true,
+		refetchQueries: [{ query: MOVIES_QUERY, variables: { name: '' } }, { query: DIRECTORS_QUERY, variables: { name: '' } }],
+		awaitRefetchQueries: true,
+	});
+
+	const [updateMovie] = useMutation(UPDATE_MOVIE_MUTATION, {
+		optimisticResponse: true,
+		refetchQueries: [{ query: MOVIES_QUERY, variables: { name: '' } }, { query: DIRECTORS_QUERY, variables: { name: '' } }],
 		awaitRefetchQueries: true,
 	});
 
@@ -61,7 +68,9 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 	const handleSave = () => {
 		const { id, name, genre, rate, directorId, watched } = selectedValue;
 		if (name && genre && directorId) {
-			addMovie({variables:{ id, name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }});
+			id ?
+				updateMovie({variables:{ id, name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }}) :
+				addMovie({variables:{ name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }});
 			onClose();
 		}
 	};

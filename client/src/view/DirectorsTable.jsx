@@ -13,10 +13,12 @@ import {
 	makeStyles
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
-
-import DirectorsDialog from './DirectorsDialog';
 import {useQuery} from "@apollo/client";
 import {DIRECTORS_QUERY} from "../queries/directorsQuery";
+
+import DirectorsDialog from './DirectorsDialog';
+import DirectorsSearch from './DirectorsSearch';
+
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 const DirectorsTable = ({onOpen}) => {
 	const styles = useStyles();
 
-	const {loading, data = {}} = useQuery(DIRECTORS_QUERY);
+	const {loading, data = {}} = useQuery(DIRECTORS_QUERY, {variables: { name: '' }});
 	const {directors = []} = data;
 
 
@@ -78,6 +80,9 @@ const DirectorsTable = ({onOpen}) => {
 
 	return (
 		<>
+			<Paper>
+				<DirectorsSearch />
+			</Paper>
 			<DirectorsDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{

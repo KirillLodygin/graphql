@@ -143,27 +143,29 @@ const Query = new GraphQLObjectType({
 		movie: {
 			type: MovieType,
 			args: { id: { type: GraphQLID } },
-			resolve(parent, args) {
-				return Movies.findById(args.id);
+			resolve(parent, { id }) {
+				return Movies.findById(id);
 			},
 		},
 		director: {
 			type: DirectorType,
 			args: { id: { type: GraphQLID } },
-			resolve(parent, args) {
-				return Directors.findById(args.id);
+			resolve(parent, { id }) {
+				return Directors.findById(id);
 			},
 		},
 		movies: {
 			type: new GraphQLList(MovieType),
-			resolve(parent, args) {
-				return Movies.find({});
+			args: { name: { type: GraphQLString } },
+			resolve(parent, { name }) {
+				return Movies.find({ name: { $regex: name, $options: "i" } });
 			}
 		},
 		directors: {
 			type: new GraphQLList(DirectorType),
-			resolve(parent, args) {
-				return Directors.find({});
+			args: { name: { type: GraphQLString } },
+			resolve(parent, { name }) {
+				return Directors.find({ name: { $regex: name, $options: "i" } });
 			}
 		}
 	}

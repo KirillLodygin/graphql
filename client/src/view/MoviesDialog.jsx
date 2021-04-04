@@ -9,7 +9,7 @@ import { DIRECTORS_QUERY } from '../queries/directorsQuery';
 const MoviesDialog = ({open, handleClose, id}) => {
 	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
 		optimisticResponse: true,
-		refetchQueries: [{ query: MOVIES_QUERY }, { query: DIRECTORS_QUERY}],
+		refetchQueries: [{ query: MOVIES_QUERY, variables: { name: '' } }, { query: DIRECTORS_QUERY, variables: { name: '' } }],
 		awaitRefetchQueries: true,
 	});
 

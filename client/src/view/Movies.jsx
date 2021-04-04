@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 
 const Movies = () => {
 	const styles = useStyles();
-	const {data = {}} = useQuery(DIRECTORS_QUERY);
+	const {data = {}} = useQuery(DIRECTORS_QUERY, {variables: { name: '' }});
 	const { directors = [] } = data;
 
 	const [state, setState] = useState(

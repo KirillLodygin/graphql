@@ -10,7 +10,7 @@ const DirectorsDialog = ({open, handleClose, id}) => {
 
 	const [delDirector] = useMutation(DELETE_DIRECTOR_MUTATION, {
 		optimisticResponse: true,
-		refetchQueries: [ { query: DIRECTORS_QUERY}, { query: MOVIES_QUERY } ],
+		refetchQueries: [ { query: DIRECTORS_QUERY, variables: { name: '' } }, { query: MOVIES_QUERY, variables: { name: '' } } ],
 		awaitRefetchQueries: true,
 	});
 

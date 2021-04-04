@@ -14,11 +14,12 @@ import {
 	CircularProgress
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
-
-import MoviesDialog from './MoviesDialog';
 import {useQuery, useMutation} from "@apollo/client";
 import {MOVIES_QUERY} from "../queries/moviesQuery";
 import { DELETE_MOVIE_MUTATION } from '../mutations/moviesMutations';
+
+import MoviesDialog from './MoviesDialog';
+import MoviesSearch from './MoviesSearch';
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -42,12 +43,11 @@ const MoviesTable = ({onOpen}) => {
 		awaitRefetchQueries: true,
 	});
 
-	const {loading, data = {}} = useQuery(MOVIES_QUERY);
+	const {loading, data = {}} = useQuery(MOVIES_QUERY, {variables: { name: '' }});
 	const {movies = []} = data;
 	movies.forEach(movie => {
 		if (movie.director === null) delMovie({variables:{id: movie.id}});
 	});
-	const moviesForTable = movies.filter(movie => movie.director !== null);
 
 	const [dialogState, setDialogState] = useState(
 		{
@@ -88,6 +88,9 @@ const MoviesTable = ({onOpen}) => {
 
 	return (
 		<>
+			<Paper>
+				<MoviesSearch />
+			</Paper>
 			<MoviesDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{
@@ -106,7 +109,7 @@ const MoviesTable = ({onOpen}) => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{moviesForTable.map(movie => {
+								{movies.filter(movie => movie.director !== null).map(movie => {
 									return (
 										<TableRow key={movie.id}>
 											<TableCell component="th" scope="row">{movie.name}</TableCell>

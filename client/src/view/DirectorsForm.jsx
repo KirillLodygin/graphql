@@ -2,7 +2,7 @@ import React from 'react';
 import {useMutation} from '@apollo/client';
 import {TextField, Button, DialogTitle, Dialog, makeStyles} from '@material-ui/core';
 import {Save} from '@material-ui/icons';
-import { ADD_DIRECTOR_MUTATION } from '../mutations/directorsMutations';
+import { ADD_DIRECTOR_MUTATION, UPDATE_DIRECTOR_MUTATION } from '../mutations/directorsMutations';
 import {DIRECTORS_QUERY} from "../queries/directorsQuery";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,9 +33,16 @@ const useStyles = makeStyles((theme) => ({
 const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 	const styles = useStyles();
 	const [addDirector] = useMutation(ADD_DIRECTOR_MUTATION, {
-		refetchQueries: [{ query: DIRECTORS_QUERY }],
+		optimisticResponse: true,
+		refetchQueries: [{ query: DIRECTORS_QUERY, variables: { name: '' } }],
 		awaitRefetchQueries: true,
 	});
+
+	const [updateDirector] = useMutation(UPDATE_DIRECTOR_MUTATION, {
+		optimisticResponse: true,
+		refetchQueries: [{ query: DIRECTORS_QUERY, variables: { name: '' } }],
+		awaitRefetchQueries: true,
+	})
 
 	const handleClose = () => {
 		onClose();
@@ -44,7 +51,7 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 	const handleSave = () => {
 		const { id, name, age } = selectedValue;
 		if (name) {
-			addDirector({variables: { name, age: Number(age) }});
+			id ? updateDirector({variables: { id, name, age: Number(age) }}) : addDirector({variables: { name, age: Number(age) }});
 			onClose();
 		}
 	};

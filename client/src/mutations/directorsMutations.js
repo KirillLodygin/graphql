@@ -15,3 +15,11 @@ export const DELETE_DIRECTOR_MUTATION = gql`
     }
   }
 `;
+
+export const UPDATE_DIRECTOR_MUTATION = gql`
+  mutation updateDirector($id: ID, $name: String!, $age: Int!) {
+    updateDirector(id: $id, name: $name, age: $age) {
+      name
+    }
+  }
+`;
