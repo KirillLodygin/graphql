@@ -43,22 +43,46 @@ const MoviesTable = ({onOpen}) => {
 		awaitRefetchQueries: true,
 	});
 
-	const {loading, data = {}} = useQuery(MOVIES_QUERY, {variables: { name: '' }});
+	const {loading, data = {}, fetchMore} = useQuery(MOVIES_QUERY, {
+		variables: { name: '' },
+		notifyOnNetworkStatusChange: true
+	});
 	const {movies = []} = data;
 	movies.forEach(movie => {
 		if (movie.director === null) delMovie({variables:{id: movie.id}});
 	});
 
-	const [dialogState, setDialogState] = useState(
-		{
-			anchorEl: null
-		}
-	);
-
 	const [openDialogState, setOpenDialogState] = useState(false);
 
 	const changeDialogOpenState = () => {
 		setOpenDialogState(!openDialogState);
+	};
+
+	const [dialogState, setDialogState] = useState(
+		{
+			anchorEl: null,
+			name: ''
+		}
+	);
+
+	const handleChange = name => (event) => {
+		setDialogState({
+			...dialogState,
+			[name]: event.target.value
+		});
+	};
+
+	const handleSearch = (e) => {
+		const { name } = dialogState;
+
+		const updateQuery = (prev, { fetchMoreResult }) => (!fetchMoreResult) ? prev : fetchMoreResult;
+
+		if(e.charCode === 13) {
+			fetchMore({
+				variables: { name },
+				updateQuery
+			});
+		}
 	};
 
 
@@ -84,12 +108,16 @@ const MoviesTable = ({onOpen}) => {
 		handleClose();
 	};
 
-	const {anchorEl, data: activeElem = {}} = dialogState;
+	const {anchorEl, name, data: activeElem = {}} = dialogState;
 
 	return (
 		<>
 			<Paper>
-				<MoviesSearch />
+				<MoviesSearch
+					name={name}
+					handleChange={handleChange}
+					handleSearch={handleSearch}
+				/>
 			</Paper>
 			<MoviesDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>

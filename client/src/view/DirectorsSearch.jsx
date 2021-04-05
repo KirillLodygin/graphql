@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const DirectorsSearch = () => {
+const DirectorsSearch = ({name, handleChange, handleSearch}) => {
 	const styles = useStyles();
 
 	return (
@@ -39,10 +39,15 @@ const DirectorsSearch = () => {
 			</div>
 			<InputBase
 				placeholder="Search…"
-				classes={{
+				classes={
+					{
 					root: styles.inputRoot,
 					input: styles.inputInput,
-				}}
+				}
+				}
+				onChange={handleChange('name')}
+				onKeyPress={(e) => handleSearch(e)}
+				value={name}
 			/>
 		</div>
 	);

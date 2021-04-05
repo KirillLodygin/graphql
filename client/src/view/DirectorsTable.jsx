@@ -38,20 +38,43 @@ const useStyles = makeStyles((theme) => ({
 const DirectorsTable = ({onOpen}) => {
 	const styles = useStyles();
 
-	const {loading, data = {}} = useQuery(DIRECTORS_QUERY, {variables: { name: '' }});
+	const {loading, data = {}, fetchMore} = useQuery(DIRECTORS_QUERY, {
+		variables: { name: '' },
+		notifyOnNetworkStatusChange: true,
+	});
 	const {directors = []} = data;
-
-
-	const [dialogState, setDialogState] = useState(
-		{
-			anchorEl: null,
-		}
-	);
 
 	const [openDialogState, setOpenDialogState] = useState(false);
 
 	const changeDialogOpenState = () => {
 		setOpenDialogState(!openDialogState);
+	};
+
+	const [dialogState, setDialogState] = useState(
+		{
+			anchorEl: null,
+			name: ''
+		}
+	);
+
+	const handleChange = name => (event) => {
+		setDialogState({
+			...dialogState,
+			[name]: event.target.value
+		});
+	};
+
+	const handleSearch = (e) => {
+		const { name } = dialogState;
+
+		const updateQuery = (prev, { fetchMoreResult }) => (!fetchMoreResult) ? prev : fetchMoreResult;
+
+		if(e.charCode === 13) {
+			fetchMore({
+				variables: { name },
+				updateQuery
+			});
+		}
 	};
 
 	const handleClick = ({currentTarget}, data) => {
@@ -76,12 +99,16 @@ const DirectorsTable = ({onOpen}) => {
 		handleClose();
 	};
 
-	const {anchorEl, data: activeElem = {}} = dialogState;
+	const {anchorEl, name, data: activeElem = {}} = dialogState;
 
 	return (
 		<>
 			<Paper>
-				<DirectorsSearch />
+				<DirectorsSearch
+					name={name}
+					handleChange={handleChange}
+					handleSearch={handleSearch}
+				/>
 			</Paper>
 			<DirectorsDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>

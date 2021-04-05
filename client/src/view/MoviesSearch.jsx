@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const MoviesSearch = () => {
+const MoviesSearch = ({name, handleChange, handleSearch}) => {
 	const styles = useStyles();
 
 	return (
@@ -39,10 +39,15 @@ const MoviesSearch = () => {
 			</div>
 			<InputBase
 				placeholder="Search…"
-				classes={{
+				classes={
+					{
 					root: styles.inputRoot,
 					input: styles.inputInput,
-				}}
+				}
+				}
+				onChange={handleChange('name')}
+				onKeyPress={(e) => handleSearch(e)}
+				value={name}
 			/>
 		</div>
 	);
