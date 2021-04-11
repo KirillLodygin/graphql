@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-	TextField,
 	OutlinedInput,
 	MenuItem,
 	Select,
@@ -18,16 +17,16 @@ import {useMutation} from '@apollo/client';
 import { ADD_MOVIE_MUTATION, UPDATE_MOVIE_MUTATION } from '../mutations/moviesMutations';
 import { MOVIES_QUERY } from '../queries/moviesQuery';
 import { DIRECTORS_QUERY } from '../queries/directorsQuery';
+import {Controller, useForm} from "react-hook-form";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {utils} from "../utils";
+import Form from "./Form";
+import Input from "./Input";
 
 const useStyles = makeStyles((theme) => ({
-	container: {
-		padding: theme.spacing(2),
-	},
 	title: {
 		paddingBottom: 0,
-	},
-	textField: {
-		width: '100%',
 	},
 	formControl: {
 		minWidth: 120,
@@ -45,6 +44,14 @@ const useStyles = makeStyles((theme) => ({
 		minWidth: 100,
 	}
 }));
+
+const schema = yup.object().shape({
+	name: yup.string().required("This field is a required"),
+	genre: yup.string().required("This field is a required"),
+	rate: yup.string().required("This field is a required"),
+	directorId: yup.string().required("This field is a required"),
+	watched: yup.boolean()
+});
 
 const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChange, selectedValue = {}, onClose, directors}) => {
 	const styles = useStyles();
@@ -65,85 +72,120 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 		onClose();
 	};
 
-	const handleSave = () => {
-		const { id, name, genre, rate, directorId, watched } = selectedValue;
-		if (name && genre && directorId) {
-			id ?
-				updateMovie({variables:{ id, name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }}) :
-				addMovie({variables:{ name, genre, rate: Number(rate), directorId, watched: Boolean(watched) }});
-			onClose();
-		}
+	const handleSave = (data) => {
+		console.log("!");
+		console.log(data);
+		selectedValue.id ?
+			updateMovie({variables:{
+				id: selectedValue.id,
+					name: data.name,
+					genre: data.genre,
+					rate: Number(data.rate),
+					directorId: data.directorId,
+					watched: Boolean(data.watched)
+			}}) :
+			addMovie({variables:{
+				name: data.name,
+				genre: data.genre,
+				rate: Number(data.rate),
+				directorId: data.directorId,
+				watched: Boolean(data.watched)
+			}});
+		onClose();
 	};
 
-	const ucFirst = (str) => {
-		if (!str) return str;
-		return str[0].toUpperCase() + str.slice(1);
-	};
-
-	const ucFirstGenre = (str) => {
-		if (!str) return str;
-		let arr = str.split('-');
-		return arr.map(item => (item === "") ? item : item[0].toUpperCase() + item.slice(1)).join('-');
-	};
-
-	const { name, genre, rate, directorId, watched } = selectedValue;
+	const {register, handleSubmit, control, errors} = useForm({
+		mode: "onBlur",
+		resolver: yupResolver(schema)
+	});
 
 	return (
 		<Dialog onClose={handleClose} open={open} aria-labelledby="simple-dialog-title">
 			<DialogTitle className={styles.title} id="simple-dialog-title">Movie information</DialogTitle>
-			<form className={styles.container} noValidate autoComplete="off">
-				<TextField
+			<Form
+				onSubmit={handleSubmit(handleSave)}
+			>
+				<Input
+					ref={register}
 					id="outlined-name"
 					label="Name"
-					className={styles.textField}
-					value={ucFirst(name)}
+					name="name"
+					type="text"
+					value={utils.ucFirst(selectedValue.name)}
 					onChange={handleChange('name')}
-					margin="normal"
-					variant="outlined"
+					error={!!errors?.name}
+					helperText={errors?.name?.message}
 				/>
-				<TextField
+				<Input
+					ref={register}
 					id="outlined-genre"
 					label="Genre"
-					className={styles.textField}
-					value={ucFirstGenre(genre)}
+					name="genre"
+					type="text"
+					value={utils.ucFirstGenre(selectedValue.genre)}
 					onChange={handleChange('genre')}
-					margin="normal"
-					variant="outlined"
+					error={!!errors?.genre}
+					helperText={errors?.genre?.message}
 				/>
-				<TextField
+				<Input
+					ref={register}
 					id="outlined-rate"
 					label="Rate"
-					value={Math.abs(rate)}
+					name="rate"
+					type="text"
+					value={utils.onlyNum(selectedValue.rate)}
 					onChange={handleChange('rate')}
-					type="number"
-					className={styles.textField}
-					margin="normal"
-					variant="outlined"
+					error={!!errors?.rate}
+					helperText={errors?.rate?.message}
 				/>
-				<FormControl variant="outlined" className={styles.formControlSelect}>
+				<FormControl
+					variant="outlined"
+					className={styles.formControlSelect}
+				>
 					<InputLabel
-						htmlFor="outlined-age-simple"
+						htmlFor="director-name-label"
 					>
 						Director
 					</InputLabel>
-					<Select
-						value={directorId}
+					<Controller
+						control={control}
+						name="directorId"
+						ref={register}
+						value={selectedValue.directorId}
 						onChange={handleSelectChange}
-						input={<OutlinedInput name="directorId" id="outlined-director" labelWidth={57} />}
-					>
-						{directors.map(director => <MenuItem key={director.id} value={director.id}>{director.name}</MenuItem>)}
-					</Select>
+						error={!!errors?.directorId}
+						as={
+							<Select
+								id="director-name"
+								input={<OutlinedInput id="outlined-director" labelWidth={57}/>}
+								helperText={errors?.directorId?.message}
+							>
+								{directors.map(director =>
+									<MenuItem key={director.id} value={director.id}>
+										{director.name}
+									</MenuItem>)}
+							</Select>
+						}
+					/>
+					<div>{errors?.directorId?.message}</div>
 				</FormControl>
 				<div className={styles.wrapper}>
 					<FormControlLabel
-						control={<Checkbox checked={watched} onChange={handleCheckboxChange('watched')} value="watched" />}
+						control={
+							<Checkbox
+								checked={selectedValue.watched}
+								defaultChecked={selectedValue.watched}
+								name="watched"
+								inputRef={register}
+								onChange={handleCheckboxChange('watched')}
+							/>}
 						label="Watched movie"
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary" className={styles.button}>
+					<Button variant="contained" type="submit" color="primary" className={styles.button}>
 						<SaveIcon /> Save
 					</Button>
 				</div>
-			</form>
+			</Form>
 		</Dialog>
 	);
 };

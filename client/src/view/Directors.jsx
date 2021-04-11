@@ -34,14 +34,15 @@ const Directors = () => {
 	};
 
 	const handleClose = () => {
-		setState({ name: '', age: 0, id: null, open: false });
+		setState({ name: '', age: '', id: null, open: false });
 	};
+
 
 	const handleChange = name => ({ target }) => {
 		setState({...state, [name]: target.value });
 	};
 
-	const { id, name, age = 0, open } = state;
+	const { id, name, age, open } = state;
 
 	return (
 		<>

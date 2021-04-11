@@ -1,19 +1,20 @@
 import React from 'react';
 import {useMutation} from '@apollo/client';
-import {TextField, Button, DialogTitle, Dialog, makeStyles} from '@material-ui/core';
+import {DialogTitle, Dialog, makeStyles} from '@material-ui/core';
 import {Save} from '@material-ui/icons';
 import { ADD_DIRECTOR_MUTATION, UPDATE_DIRECTOR_MUTATION } from '../mutations/directorsMutations';
 import {DIRECTORS_QUERY} from "../queries/directorsQuery";
+import {useForm} from "react-hook-form";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {utils} from "../utils";
+import Form from "./Form";
+import Input from "./Input";
+import PrimaryButton from "./Button";
 
 const useStyles = makeStyles((theme) => ({
-	container: {
-		padding: theme.spacing(2),
-	},
 	title: {
 		paddingBottom: 0,
-	},
-	textField: {
-		width: '100%',
 	},
 	formControl: {
 		margin: theme.spacing,
@@ -30,8 +31,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
+const schema = yup.object().shape({
+	name: yup.string().required("This field is a required"),
+	age: yup.string().required("This field is a required"),
+});
+
+const DirectorsForm = ({handleChange, selectedValue, open, onClose}) => {
 	const styles = useStyles();
+
 	const [addDirector] = useMutation(ADD_DIRECTOR_MUTATION, {
 		optimisticResponse: true,
 		refetchQueries: [{ query: DIRECTORS_QUERY, variables: { name: '' } }],
@@ -48,51 +55,50 @@ const DirectorsForm = ({open, handleChange, selectedValue = {}, onClose}) => {
 		onClose();
 	};
 
-	const handleSave = () => {
-		const { id, name, age } = selectedValue;
-		if (name) {
-			id ? updateDirector({variables: { id, name, age: Number(age) }}) : addDirector({variables: { name, age: Number(age) }});
-			onClose();
-		}
+	const handleSave = (data) => {
+		selectedValue.id ?
+			updateDirector({variables: { id: selectedValue.id, name: data.name, age: Number(data.age) }}) :
+			addDirector({variables: { name: data.name, age: Number(data.age)  }});
+		onClose();
 	};
 
-	const ucFirst = (str) => {
-		if (!str) return str;
-		let arr = str.split(' ');
-		return arr.map(item => (item === "") ? item : item[0].toUpperCase() + item.slice(1)).join(' ');
-	};
-
-	const { name, age } = selectedValue;
+	const {register, handleSubmit, errors} = useForm({
+		mode: "onBlur",
+		resolver: yupResolver(schema)
+	});
 
 	return (
 		<Dialog onClose={handleClose} open={open} aria-labelledby="simple-dialog-title">
 			<DialogTitle className={styles.title} id="simple-dialog-title">Director information</DialogTitle>
-			<form className={styles.container} noValidate autoComplete="off">
-				<TextField
+			<Form
+				onSubmit={handleSubmit(handleSave)}
+			>
+				<Input
+					ref={register}
 					id="outlined-name"
 					label="Name"
-					className={styles.textField}
-					value={ucFirst(name)}
+					name="name"
+					type="text"
 					onChange={handleChange('name')}
-					margin="normal"
-					variant="outlined"
+					value={utils.ucFirst(selectedValue.name)}
+					error={!!errors?.name}
+					helperText={errors?.name?.message}
 				/>
-				<TextField
+				<Input
+					ref={register}
 					id="outlined-rate"
 					label="Age"
-					className={styles.textField}
-					value={Math.abs(age)}
+					name="age"
+					type="text"
 					onChange={handleChange('age')}
-					type="number"
-					margin="normal"
-					variant="outlined"
+					value={utils.onlyNum(selectedValue.age)}
+					error={!!errors?.age}
+					helperText={errors?.age?.message}
 				/>
-				<div className={styles.wrapper}>
-					<Button onClick={handleSave} variant="contained" color="primary" className={styles.button}>
-						<Save/> Save
-					</Button>
-				</div>
-			</form>
+				<PrimaryButton>
+					<Save/> Save
+				</PrimaryButton>
+			</Form>
 		</Dialog>
 	);
 };
