@@ -16,6 +16,7 @@ import {MoreVert, Delete, Create} from '@material-ui/icons';
 import {useQuery} from "@apollo/client";
 import {DIRECTORS_QUERY} from "../queries/directorsQuery";
 
+import DirectorsForm from './DirectorsForm';
 import DirectorsDialog from './DirectorsDialog';
 import DirectorsSearch from './DirectorsSearch';
 
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const DirectorsTable = ({onOpen}) => {
+const DirectorsTable = () => {
 	const styles = useStyles();
 
 	const {loading, data = {}, fetchMore} = useQuery(DIRECTORS_QUERY, {
@@ -44,10 +45,15 @@ const DirectorsTable = ({onOpen}) => {
 	});
 	const {directors = []} = data;
 
-	const [openDialogState, setOpenDialogState] = useState(false);
+	const [isOpenDialogState, setOpenDialogState] = useState(false);
 
 	const changeDialogOpenState = () => {
-		setOpenDialogState(!openDialogState);
+		setOpenDialogState(!isOpenDialogState);
+	};
+
+	const [isDirFormOpen, setDirFormOpen] = useState(false);
+	const changeDirFormOpenState = () => {
+		setDirFormOpen(!isDirFormOpen);
 	};
 
 	const [dialogState, setDialogState] = useState(
@@ -90,8 +96,12 @@ const DirectorsTable = ({onOpen}) => {
 	};
 
 	const handleEdit = () => {
-		onOpen(dialogState.data);
+		changeDirFormOpenState();
 		handleClose();
+	};
+
+	const handleDirFormClose = () => {
+		changeDirFormOpenState();
 	};
 
 	const handleDelete = () => {
@@ -110,7 +120,11 @@ const DirectorsTable = ({onOpen}) => {
 					handleSearch={handleSearch}
 				/>
 			</Paper>
-			<DirectorsDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
+			<DirectorsForm
+				selectedValue={{name: activeElem.name, age: activeElem.age, id: activeElem.id}}
+				open={isDirFormOpen}
+				onClose={handleDirFormClose} />
+			<DirectorsDialog open={isOpenDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{
 					loading ?

@@ -73,8 +73,6 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 	};
 
 	const handleSave = (data) => {
-		console.log("!");
-		console.log(data);
 		selectedValue.id ?
 			updateMovie({variables:{
 				id: selectedValue.id,

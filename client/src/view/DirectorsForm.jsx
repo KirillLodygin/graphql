@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {useMutation} from '@apollo/client';
 import {DialogTitle, Dialog, makeStyles} from '@material-ui/core';
 import {Save} from '@material-ui/icons';
@@ -36,8 +36,17 @@ const schema = yup.object().shape({
 	age: yup.string().required("This field is a required"),
 });
 
-const DirectorsForm = ({handleChange, selectedValue, open, onClose}) => {
+const DirectorsForm = ({selectedValue, open, onClose}) => {
 	const styles = useStyles();
+
+	const [formState, setFormState] = useState({
+		name: '',
+		age: ''
+	});
+
+	useEffect(() => {
+		setFormState({name: selectedValue.name, age: selectedValue.age});
+	},[selectedValue]);
 
 	const [addDirector] = useMutation(ADD_DIRECTOR_MUTATION, {
 		optimisticResponse: true,
@@ -79,10 +88,12 @@ const DirectorsForm = ({handleChange, selectedValue, open, onClose}) => {
 					label="Name"
 					name="name"
 					type="text"
-					onChange={handleChange('name')}
-					value={utils.ucFirst(selectedValue.name)}
+					value={formState.name}
 					error={!!errors?.name}
 					helperText={errors?.name?.message}
+					onChange={(event) => {
+						setFormState({...formState, name: utils.ucFirst(event.target.value)})
+					}}
 				/>
 				<Input
 					ref={register}
@@ -90,10 +101,12 @@ const DirectorsForm = ({handleChange, selectedValue, open, onClose}) => {
 					label="Age"
 					name="age"
 					type="text"
-					onChange={handleChange('age')}
-					value={utils.onlyNum(selectedValue.age)}
+					value={formState.age}
 					error={!!errors?.age}
 					helperText={errors?.age?.message}
+					onChange={(event) => {
+						setFormState({...formState, age: utils.onlyNum(event.target.value)});
+					}}
 				/>
 				<PrimaryButton>
 					<Save/> Save

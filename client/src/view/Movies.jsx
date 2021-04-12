@@ -62,7 +62,6 @@ const Movies = () => {
 		setState({...state, [name]: target.value });
 	};
 
-	console.log(state);
 	const { id, name, genre, watched = false, rate, directorId, open } = state;
 
 	return (

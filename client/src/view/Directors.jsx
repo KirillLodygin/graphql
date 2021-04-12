@@ -20,41 +20,28 @@ const useStyles = makeStyles(() => ({
 const Directors = () => {
 	const styles = useStyles();
 
-	const [state, setState] = useState(
-		{
-			open: false
-		}
-	);
+	const [state, setState] = useState({ open: false });
 
 	const handleClickOpen = (data) => {
 		setState({
 			open: true,
-			...data,
 		});
 	};
 
 	const handleClose = () => {
-		setState({ name: '', age: '', id: null, open: false });
+		setState({ open: false });
 	};
 
-
-	const handleChange = name => ({ target }) => {
-		setState({...state, [name]: target.value });
-	};
-
-	const { id, name, age, open } = state;
+	const { open } = state;
 
 	return (
 		<>
 			<DirectorsForm
-				handleChange={handleChange}
-				selectedValue={{ name, age, id }}
+				selectedValue={{ name: '', age: '', id: null }}
 				open={open}
 				onClose={handleClose} />
 			<div className={styles.wrapper}>
-				<DirectorsTable
-					onOpen={handleClickOpen}
-				/>
+				<DirectorsTable/>
 				<Fab onClick={() => handleClickOpen(null)} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>
 				</Fab>
