@@ -20,6 +20,7 @@ import { DELETE_MOVIE_MUTATION } from '../mutations/moviesMutations';
 
 import MoviesDialog from './MoviesDialog';
 import MoviesSearch from './MoviesSearch';
+import MoviesForm from './MoviesForm';
 
 const useStyles = makeStyles((theme) => ({
 	searchRoot: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const MoviesTable = ({onOpen}) => {
+const MoviesTable = ({directors}) => {
 	const styles = useStyles();
 	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
 		optimisticResponse: true,
@@ -56,6 +57,12 @@ const MoviesTable = ({onOpen}) => {
 
 	const changeDialogOpenState = () => {
 		setOpenDialogState(!openDialogState);
+	};
+
+	const [isMoviesFormOpen, setMoviesFormOpen] = useState(false);
+
+	const changeMoviesFormOpenState = () => {
+		setMoviesFormOpen(!isMoviesFormOpen);
 	};
 
 	const [dialogState, setDialogState] = useState(
@@ -99,8 +106,12 @@ const MoviesTable = ({onOpen}) => {
 	};
 
 	const handleEdit = () => {
-		onOpen(dialogState.data);
+		changeMoviesFormOpenState();
 		handleClose();
+	};
+
+	const handleMoviesFormClose = () => {
+		changeMoviesFormOpenState();
 	};
 
 	const handleDelete = () => {
@@ -109,6 +120,8 @@ const MoviesTable = ({onOpen}) => {
 	};
 
 	const {anchorEl, name, data: activeElem = {}} = dialogState;
+	console.log('activeElem');
+	console.log(activeElem);
 
 	return (
 		<>
@@ -119,6 +132,21 @@ const MoviesTable = ({onOpen}) => {
 					handleSearch={handleSearch}
 				/>
 			</Paper>
+			<MoviesForm
+				selectedValue={
+					{
+						id: activeElem.id,
+						name: activeElem.name,
+						genre: activeElem.genre,
+						watched: activeElem.watched,
+						rate: activeElem.rate,
+						directorId: (activeElem.director) ? activeElem.director.id : ''
+					}
+				}
+				open={isMoviesFormOpen}
+				onClose={handleMoviesFormClose}
+				directors={directors}
+			/>
 			<MoviesDialog open={openDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
 				{

@@ -24,60 +24,29 @@ const Movies = () => {
 	const {data = {}} = useQuery(DIRECTORS_QUERY, {variables: { name: '' }});
 	const { directors = [] } = data;
 
-	const [state, setState] = useState(
-		{
-			open: false,
-		}
-	);
+	const [state, setState] = useState({open: false});
 
-	const handleClickOpen = (data = {}) => {
-		setState({
-			open: true,
-			...data,
-			directorId: data.director ? data.director.id : '',
-		});
+	const handleClickOpen = () => {
+		setState({open: true});
 	};
 
 	const handleClose = () => {
-		setState({
-			name: '',
-			genre: '',
-			watched: false,
-			rate: 0,
-			directorId: '',
-			open: false
-		});
+		setState({open: false});
 	};
 
-	const handleSelectChange = ({ target }) => {
-		setState({...state, [target.name]: target.value });
-	};
-
-	const handleCheckboxChange = name => ({ target }) => {
-		setState({...state, [name]: target.checked });
-	};
-
-
-	const handleChange = name => ({ target }) => {
-		setState({...state, [name]: target.value });
-	};
-
-	const { id, name, genre, watched = false, rate, directorId, open } = state;
+	const { open } = state;
 
 	return (
 		<>
 			<MoviesForm
-				handleChange={handleChange}
-				handleCheckboxChange={handleCheckboxChange}
-				handleSelectChange={handleSelectChange}
-				selectedValue={{ id, name, genre, watched, rate, directorId }}
+				selectedValue={{ id: null, name: '', genre: '', watched: false, rate: 0, directorId: '' }}
 				open={open}
 				onClose={handleClose}
 				directors={directors}
 			/>
 			<div className={styles.wrapper}>
 				<MoviesTable
-					onOpen={handleClickOpen}
+					directors={directors}
 				/>
 				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>

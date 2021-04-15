@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
 	OutlinedInput,
 	MenuItem,
@@ -48,13 +48,31 @@ const useStyles = makeStyles((theme) => ({
 const schema = yup.object().shape({
 	name: yup.string().required("This field is a required"),
 	genre: yup.string().required("This field is a required"),
-	rate: yup.string().required("This field is a required"),
+	rate: yup.number().required(),
 	directorId: yup.string().required("This field is a required"),
 	watched: yup.boolean()
 });
 
-const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChange, selectedValue = {}, onClose, directors}) => {
+const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 	const styles = useStyles();
+
+	const [formState, setFormState] = useState({
+		name: selectedValue.name,
+		genre: selectedValue.genre,
+		rate: selectedValue.rate,
+		directorId: selectedValue.directorId,
+		watched: selectedValue.watched
+	});
+
+	useEffect(() => {
+		setFormState({
+			name: selectedValue.name,
+			genre: selectedValue.genre,
+			rate: selectedValue.rate,
+			directorId: selectedValue.directorId,
+			watched: selectedValue.watched
+		});
+	},[selectedValue]);
 
 	const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
 		optimisticResponse: true,
@@ -109,10 +127,12 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 					label="Name"
 					name="name"
 					type="text"
-					value={utils.ucFirst(selectedValue.name)}
-					onChange={handleChange('name')}
+					value={formState.name}
 					error={!!errors?.name}
 					helperText={errors?.name?.message}
+					onChange={(event) => {
+						setFormState({...formState, name: utils.ucFirst(event.target.value)})
+					}}
 				/>
 				<Input
 					ref={register}
@@ -120,21 +140,25 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 					label="Genre"
 					name="genre"
 					type="text"
-					value={utils.ucFirstGenre(selectedValue.genre)}
-					onChange={handleChange('genre')}
+					value={formState.genre}
 					error={!!errors?.genre}
 					helperText={errors?.genre?.message}
+					onChange={(event) => {
+						setFormState({...formState, genre: utils.ucFirst(event.target.value)})
+					}}
 				/>
 				<Input
 					ref={register}
 					id="outlined-rate"
 					label="Rate"
 					name="rate"
-					type="text"
-					value={utils.onlyNum(selectedValue.rate)}
-					onChange={handleChange('rate')}
+					type="number"
+					value={formState.rate}
 					error={!!errors?.rate}
 					helperText={errors?.rate?.message}
+					onChange={(event) => {
+						setFormState({...formState, rate: event.target.value});
+					}}
 				/>
 				<FormControl
 					variant="outlined"
@@ -149,8 +173,10 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 						control={control}
 						name="directorId"
 						ref={register}
-						defaultValue={selectedValue.directorId}
-						onChange={handleSelectChange}
+						defaultValue={formState.directorId}
+						onChange={(event) => {
+							setFormState({...formState, directorId: event.target.value});
+						}}
 						error={!!errors?.directorId}
 						as={
 							<Select
@@ -170,10 +196,12 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 					<FormControlLabel
 						control={
 							<Checkbox
-								checked={selectedValue.watched}
+								checked={formState.watched}
 								name="watched"
 								inputRef={register}
-								onChange={handleCheckboxChange('watched')}
+								onChange={(event) => {
+									setFormState({...formState, watched: event.target.checked});
+								}}
 							/>}
 						label="Watched movie"
 					/>
