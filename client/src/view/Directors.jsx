@@ -22,7 +22,7 @@ const Directors = () => {
 
 	const [state, setState] = useState({ open: false });
 
-	const handleClickOpen = (data) => {
+	const handleClickOpen = () => {
 		setState({
 			open: true,
 		});

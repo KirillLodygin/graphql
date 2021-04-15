@@ -75,20 +75,20 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 	const handleSave = (data) => {
 		selectedValue.id ?
 			updateMovie({variables:{
-				id: selectedValue.id,
+					id: selectedValue.id,
 					name: data.name,
 					genre: data.genre,
 					rate: Number(data.rate),
 					directorId: data.directorId,
 					watched: Boolean(data.watched)
-			}}) :
+				}}) :
 			addMovie({variables:{
-				name: data.name,
-				genre: data.genre,
-				rate: Number(data.rate),
-				directorId: data.directorId,
-				watched: Boolean(data.watched)
-			}});
+					name: data.name,
+					genre: data.genre,
+					rate: Number(data.rate),
+					directorId: data.directorId,
+					watched: Boolean(data.watched)
+				}});
 		onClose();
 	};
 
@@ -149,14 +149,13 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 						control={control}
 						name="directorId"
 						ref={register}
-						value={selectedValue.directorId}
+						defaultValue={selectedValue.directorId}
 						onChange={handleSelectChange}
 						error={!!errors?.directorId}
 						as={
 							<Select
 								id="director-name"
 								input={<OutlinedInput id="outlined-director" labelWidth={57}/>}
-								helperText={errors?.directorId?.message}
 							>
 								{directors.map(director =>
 									<MenuItem key={director.id} value={director.id}>
@@ -172,7 +171,6 @@ const MoviesForm = ({open, handleChange, handleSelectChange, handleCheckboxChang
 						control={
 							<Checkbox
 								checked={selectedValue.watched}
-								defaultChecked={selectedValue.watched}
 								name="watched"
 								inputRef={register}
 								onChange={handleCheckboxChange('watched')}

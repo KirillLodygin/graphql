@@ -24,11 +24,7 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(2),
 		display: 'flex',
 		justifyContent: 'flex-end',
-	},
-	button: {
-		minWidth: 100,
-		minHeight: 48,
-	},
+	}
 }));
 
 const schema = yup.object().shape({
@@ -40,8 +36,8 @@ const DirectorsForm = ({selectedValue, open, onClose}) => {
 	const styles = useStyles();
 
 	const [formState, setFormState] = useState({
-		name: '',
-		age: ''
+		name: selectedValue.name,
+		age: selectedValue.age
 	});
 
 	useEffect(() => {

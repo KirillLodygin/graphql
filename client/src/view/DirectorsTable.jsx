@@ -52,6 +52,7 @@ const DirectorsTable = () => {
 	};
 
 	const [isDirFormOpen, setDirFormOpen] = useState(false);
+
 	const changeDirFormOpenState = () => {
 		setDirFormOpen(!isDirFormOpen);
 	};
