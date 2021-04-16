@@ -95,14 +95,14 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 			updateMovie({variables:{
 					id: selectedValue.id,
 					name: data.name,
-					genre: data.genre,
+					genre: utils.strToArr(data.genre),
 					rate: Number(data.rate),
 					directorId: data.directorId,
 					watched: Boolean(data.watched)
 				}}) :
 			addMovie({variables:{
 					name: data.name,
-					genre: data.genre,
+					genre: utils.strToArr(data.genre),
 					rate: Number(data.rate),
 					directorId: data.directorId,
 					watched: Boolean(data.watched)
@@ -144,7 +144,7 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 					error={!!errors?.genre}
 					helperText={errors?.genre?.message}
 					onChange={(event) => {
-						setFormState({...formState, genre: utils.ucFirst(event.target.value)})
+						setFormState({...formState, genre: utils.ucFirstGenre(event.target.value)})
 					}}
 				/>
 				<Input

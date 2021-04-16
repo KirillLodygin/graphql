@@ -39,7 +39,7 @@ const Movies = () => {
 	return (
 		<>
 			<MoviesForm
-				selectedValue={{ id: null, name: '', genre: '', watched: false, rate: 0, directorId: '' }}
+				selectedValue={{ id: null, name: '', genre: null, watched: false, rate: 0, directorId: '' }}
 				open={open}
 				onClose={handleClose}
 				directors={directors}

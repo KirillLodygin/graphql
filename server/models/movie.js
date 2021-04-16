@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const movieSchema = new Schema({
 	name: String,
-	genre: String,
+	genre: [String],
 	directorId: String,
 	watched: Boolean,
 	rate: Number,

@@ -120,8 +120,6 @@ const MoviesTable = ({directors}) => {
 	};
 
 	const {anchorEl, name, data: activeElem = {}} = dialogState;
-	console.log('activeElem');
-	console.log(activeElem);
 
 	return (
 		<>
@@ -137,7 +135,7 @@ const MoviesTable = ({directors}) => {
 					{
 						id: activeElem.id,
 						name: activeElem.name,
-						genre: activeElem.genre,
+						genre: (activeElem.genre) ? activeElem.genre.join(', ') : null,
 						watched: activeElem.watched,
 						rate: activeElem.rate,
 						directorId: (activeElem.director) ? activeElem.director.id : ''
@@ -169,7 +167,7 @@ const MoviesTable = ({directors}) => {
 									return (
 										<TableRow key={movie.id}>
 											<TableCell component="th" scope="row">{movie.name}</TableCell>
-											<TableCell>{movie.genre}</TableCell>
+											<TableCell>{(movie.genre) ? movie.genre.join(', ') : ''}</TableCell>
 											<TableCell align="left">{movie.rate}</TableCell>
 											<TableCell>{movie.director.name}</TableCell>
 											<TableCell>

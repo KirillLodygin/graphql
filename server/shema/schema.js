@@ -18,7 +18,7 @@ const MovieType = new GraphQLObjectType({
 	fields: () => ({
 		id: { type: GraphQLID },
 		name: { type: new GraphQLNonNull(GraphQLString) },
-		genre: { type: new GraphQLNonNull(GraphQLString) },
+		genre: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
 		watched: { type: new GraphQLNonNull(GraphQLBoolean) },
 		rate: { type: GraphQLInt },
 		director: {
@@ -67,7 +67,7 @@ const Mutation = new GraphQLObjectType({
 			type: MovieType,
 			args: {
 				name: { type: new GraphQLNonNull(GraphQLString) },
-				genre: { type: new GraphQLNonNull(GraphQLString) },
+				genre: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
 				directorId: { type: GraphQLID },
 				watched: { type: new GraphQLNonNull(GraphQLBoolean) },
 				rate: { type: GraphQLInt },
@@ -121,7 +121,7 @@ const Mutation = new GraphQLObjectType({
 			args: {
 				id: { type: GraphQLID },
 				name: { type: new GraphQLNonNull(GraphQLString) },
-				genre: { type: new GraphQLNonNull(GraphQLString) },
+				genre: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
 				directorId: { type: GraphQLID },
 				watched: { type: new GraphQLNonNull(GraphQLBoolean) },
 				rate: { type: GraphQLInt },
