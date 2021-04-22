@@ -135,7 +135,7 @@ const MoviesTable = ({directors}) => {
 					{
 						id: activeElem.id,
 						name: activeElem.name,
-						genre: (activeElem.genre) ? activeElem.genre.join(', ') : null,
+						genre: (activeElem.genre) ? activeElem.genre : null,
 						watched: activeElem.watched,
 						rate: activeElem.rate,
 						directorId: (activeElem.director) ? activeElem.director.id : ''

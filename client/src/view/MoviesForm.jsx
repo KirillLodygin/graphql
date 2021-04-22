@@ -4,8 +4,11 @@ import {
 	MenuItem,
 	Select,
 	Checkbox,
+	FormLabel,
 	FormControl,
 	FormControlLabel,
+	FormGroup,
+	FormHelperText,
 	InputLabel,
 	Button,
 	DialogTitle,
@@ -13,7 +16,7 @@ import {
 	makeStyles
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import {useMutation} from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { ADD_MOVIE_MUTATION, UPDATE_MOVIE_MUTATION } from '../mutations/moviesMutations';
 import { MOVIES_QUERY } from '../queries/moviesQuery';
 import { DIRECTORS_QUERY } from '../queries/directorsQuery';
@@ -35,6 +38,30 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(2),
 		width: '100%',
 	},
+	genresUsing: {
+		marginTop: theme.spacing(2),
+		marginLeft: theme.spacing(2),
+		fontSize: '25px'
+	},
+	formLabel: {
+		marginTop: theme.spacing(3),
+	},
+	genres: {
+		marginTop: theme.spacing(1),
+		padding: theme.spacing(1),
+		display: 'flex',
+		flexFlow: 'row wrap',
+		width: '100%',
+	},
+	genresWrapper: {
+		padding: theme.spacing(1),
+		display: 'flex',
+		flexFlow: 'row wrap',
+		width: '100%',
+	},
+	genreCheckbox: {
+		width: 'calc(30%)',
+	},
 	wrapper: {
 		marginTop: theme.spacing(2),
 		display: 'flex',
@@ -47,11 +74,36 @@ const useStyles = makeStyles((theme) => ({
 
 const schema = yup.object().shape({
 	name: yup.string().required("This field is a required"),
-	genre: yup.string().required("This field is a required"),
 	rate: yup.number().required(),
+	drama: yup.boolean(),
+	comedy: yup.boolean(),
+	historical: yup.boolean(),
+	military: yup.boolean(),
+	adventure: yup.boolean(),
+	crime: yup.boolean(),
+	detective: yup.boolean(),
+	science_fiction: yup.boolean(),
+	western: yup.boolean(),
+	fantasy: yup.boolean(),
+	romantic: yup.boolean(),
+	musical: yup.boolean(),
 	directorId: yup.string().required("This field is a required"),
 	watched: yup.boolean()
-});
+}).test(
+	'myCustomTest',
+	null,
+	(obj) => {
+		if (obj.drama || obj.comedy || obj.historical || obj.military || obj.adventure || obj.crime || obj.detective ||
+			obj.science_fiction || obj.western || obj.fantasy || obj.romantic || obj.musical) {
+			return true;
+		}
+		return new yup.ValidationError(
+			'You must select at least one genre',
+			null,
+			'genre'
+		);
+	}
+);
 
 const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 	const styles = useStyles();
@@ -64,6 +116,21 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 		watched: selectedValue.watched
 	});
 
+	const [genreCheckBoxesState, setGenreCheckBoxesState] = useState({
+		drama: false,
+		comedy: false,
+		historical: false,
+		military: false,
+		adventure: false,
+		crime: false,
+		detective: false,
+		science_fiction: false,
+		western: false,
+		fantasy: false,
+		romantic: false,
+		musical: false
+	});
+
 	useEffect(() => {
 		setFormState({
 			name: selectedValue.name,
@@ -72,6 +139,36 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 			directorId: selectedValue.directorId,
 			watched: selectedValue.watched
 		});
+
+		(selectedValue.genre === null) ?
+			setGenreCheckBoxesState({
+				drama: false,
+				comedy: false,
+				historical: false,
+				military: false,
+				adventure: false,
+				crime: false,
+				detective: false,
+				science_fiction: false,
+				western: false,
+				fantasy: false,
+				romantic: false,
+				musical: false
+			}) :
+			setGenreCheckBoxesState({
+				drama: selectedValue.genre.includes('Drama'),
+				comedy: selectedValue.genre.includes('Comedy'),
+				historical: selectedValue.genre.includes('Historical'),
+				military: selectedValue.genre.includes('Military'),
+				adventure: selectedValue.genre.includes('Adventure'),
+				crime: selectedValue.genre.includes('Crime'),
+				detective: selectedValue.genre.includes('Detective'),
+				science_fiction: selectedValue.genre.includes('Science_fiction'),
+				western: selectedValue.genre.includes('Western'),
+				fantasy: selectedValue.genre.includes('Fantasy'),
+				romantic: selectedValue.genre.includes('Romantic'),
+				musical: selectedValue.genre.includes('Musical')
+			})
 	},[selectedValue]);
 
 	const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
@@ -90,19 +187,23 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 		onClose();
 	};
 
+	const handleChangeCheckBox = (event) => {
+		setGenreCheckBoxesState({...genreCheckBoxesState, [event.target.name]: event.target.checked });
+	};
+
 	const handleSave = (data) => {
 		selectedValue.id ?
 			updateMovie({variables:{
 					id: selectedValue.id,
 					name: data.name,
-					genre: utils.strToArr(data.genre),
+					genre: Object.entries(genreCheckBoxesState).filter(v => v[1]).map(v => utils.ucFirst(v[0])),
 					rate: Number(data.rate),
 					directorId: data.directorId,
 					watched: Boolean(data.watched)
 				}}) :
 			addMovie({variables:{
 					name: data.name,
-					genre: utils.strToArr(data.genre),
+					genre: Object.entries(genreCheckBoxesState).filter(v => v[1]).map(v => utils.ucFirst(v[0])),
 					rate: Number(data.rate),
 					directorId: data.directorId,
 					watched: Boolean(data.watched)
@@ -134,19 +235,34 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 						setFormState({...formState, name: utils.ucFirst(event.target.value)})
 					}}
 				/>
-				<Input
-					ref={register}
-					id="outlined-genre"
-					label="Genre"
+				<FormControl
+					component="fieldset"
 					name="genre"
-					type="text"
-					value={formState.genre}
+					className={styles.genres}
 					error={!!errors?.genre}
-					helperText={errors?.genre?.message}
-					onChange={(event) => {
-						setFormState({...formState, genre: utils.ucFirstGenre(event.target.value)})
-					}}
-				/>
+				>
+					<FormLabel className={styles.formLabel}>Specify genre</FormLabel>
+					<FormGroup
+						className={styles.genresWrapper}
+					>
+						{
+							Object.keys(genreCheckBoxesState).map(
+								genre => (
+									<FormControlLabel
+										className={styles.genreCheckbox}
+										control={<Checkbox
+											checked={genreCheckBoxesState[genre]}
+											inputRef={register}
+											onChange={handleChangeCheckBox}
+											name={genre} />}
+										label={utils.ucFirst(genre)}
+									/>
+								)
+							)
+						}
+					</FormGroup>
+					<FormHelperText>{errors?.genre?.message}</FormHelperText>
+				</FormControl>
 				<Input
 					ref={register}
 					id="outlined-rate"
@@ -157,7 +273,7 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 					error={!!errors?.rate}
 					helperText={errors?.rate?.message}
 					onChange={(event) => {
-						setFormState({...formState, rate: event.target.value});
+						setFormState({...formState, rate: utils.rateInInterval(event.target.value)});
 					}}
 				/>
 				<FormControl
@@ -190,7 +306,7 @@ const MoviesForm = ({open, selectedValue = {}, onClose, directors}) => {
 							</Select>
 						}
 					/>
-					<div>{errors?.directorId?.message}</div>
+					<FormHelperText>{errors?.directorId?.message}</FormHelperText>
 				</FormControl>
 				<div className={styles.wrapper}>
 					<FormControlLabel
