@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const MoviesTable = ({directors}) => {
+const MoviesTable = ({directors, onClose, onOpen, open}) => {
 	const styles = useStyles();
 	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
 		optimisticResponse: true,
@@ -59,12 +59,6 @@ const MoviesTable = ({directors}) => {
 		setOpenDialogState(!openDialogState);
 	};
 
-	const [isMoviesFormOpen, setMoviesFormOpen] = useState(false);
-
-	const changeMoviesFormOpenState = () => {
-		setMoviesFormOpen(!isMoviesFormOpen);
-	};
-
 	const [dialogState, setDialogState] = useState(
 		{
 			anchorEl: null,
@@ -84,12 +78,10 @@ const MoviesTable = ({directors}) => {
 
 		const updateQuery = (prev, { fetchMoreResult }) => (!fetchMoreResult) ? prev : fetchMoreResult;
 
-		if(e.charCode === 13) {
-			fetchMore({
-				variables: { name },
-				updateQuery
-			});
-		}
+		fetchMore({
+			variables: { name },
+			updateQuery
+		});
 	};
 
 
@@ -106,12 +98,13 @@ const MoviesTable = ({directors}) => {
 	};
 
 	const handleEdit = () => {
-		changeMoviesFormOpenState();
+		onOpen();
 		handleClose();
 	};
 
 	const handleMoviesFormClose = () => {
-		changeMoviesFormOpenState();
+		setDialogState({...dialogState, data: {}});
+		onClose();
 	};
 
 	const handleDelete = () => {
@@ -133,15 +126,15 @@ const MoviesTable = ({directors}) => {
 			<MoviesForm
 				selectedValue={
 					{
-						id: activeElem.id,
-						name: activeElem.name,
+						id: (activeElem.id) ? activeElem.id : null,
+						name: (activeElem.name) ? activeElem.name : '',
 						genre: (activeElem.genre) ? activeElem.genre : null,
 						watched: activeElem.watched,
-						rate: activeElem.rate,
+						rate: (activeElem.rate) ? activeElem.rate : 0,
 						directorId: (activeElem.director) ? activeElem.director.id : ''
 					}
 				}
-				open={isMoviesFormOpen}
+				open={open}
 				onClose={handleMoviesFormClose}
 				directors={directors}
 			/>

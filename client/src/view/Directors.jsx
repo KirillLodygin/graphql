@@ -3,7 +3,6 @@ import {Fab, makeStyles} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 
 import DirectorsTable from './DirectorsTable';
-import DirectorsForm from './DirectorsForm';
 
 const useStyles = makeStyles(() => ({
 	wrapper: {
@@ -28,21 +27,23 @@ const Directors = () => {
 		});
 	};
 
-	const handleClose = () => {
-		setState({ open: false });
+	const handleClickClose = () => {
+		setState({
+			open: false
+		});
 	};
 
 	const { open } = state;
 
 	return (
 		<>
-			<DirectorsForm
-				selectedValue={{ name: '', age: '', id: null }}
-				open={open}
-				onClose={handleClose} />
 			<div className={styles.wrapper}>
-				<DirectorsTable/>
-				<Fab onClick={() => handleClickOpen(null)} color="primary" aria-label="Add" className={styles.fab}>
+				<DirectorsTable
+					open={open}
+					onClose={handleClickClose}
+					onOpen={handleClickOpen}
+				/>
+				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>
 				</Fab>
 			</div>

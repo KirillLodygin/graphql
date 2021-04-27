@@ -5,7 +5,6 @@ import {useQuery} from "@apollo/client";
 import {DIRECTORS_QUERY} from '../queries/directorsForMovies'
 
 import MoviesTable from './MoviesTable';
-import MoviesForm from './MoviesForm';
 
 const useStyles = makeStyles(() => ({
 	wrapper: {
@@ -30,7 +29,7 @@ const Movies = () => {
 		setState({open: true});
 	};
 
-	const handleClose = () => {
+	const handleClickClose = () => {
 		setState({open: false});
 	};
 
@@ -38,15 +37,12 @@ const Movies = () => {
 
 	return (
 		<>
-			<MoviesForm
-				selectedValue={{ id: null, name: '', genre: null, watched: false, rate: 0, directorId: '' }}
-				open={open}
-				onClose={handleClose}
-				directors={directors}
-			/>
 			<div className={styles.wrapper}>
 				<MoviesTable
 					directors={directors}
+					onClose={handleClickClose}
+					onOpen={handleClickOpen}
+					open={open}
 				/>
 				<Fab onClick={() => handleClickOpen()} color="primary" aria-label="Add" className={styles.fab}>
 					<Add/>

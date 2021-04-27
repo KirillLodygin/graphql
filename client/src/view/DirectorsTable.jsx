@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const DirectorsTable = () => {
+const DirectorsTable = ({open, onClose, onOpen}) => {
 	const styles = useStyles();
 
 	const {loading, data = {}, fetchMore} = useQuery(DIRECTORS_QUERY, {
@@ -49,12 +49,6 @@ const DirectorsTable = () => {
 
 	const changeDialogOpenState = () => {
 		setOpenDialogState(!isOpenDialogState);
-	};
-
-	const [isDirFormOpen, setDirFormOpen] = useState(false);
-
-	const changeDirFormOpenState = () => {
-		setDirFormOpen(!isDirFormOpen);
 	};
 
 	const [dialogState, setDialogState] = useState(
@@ -76,12 +70,10 @@ const DirectorsTable = () => {
 
 		const updateQuery = (prev, { fetchMoreResult }) => (!fetchMoreResult) ? prev : fetchMoreResult;
 
-		if(e.charCode === 13) {
-			fetchMore({
-				variables: { name },
-				updateQuery
-			});
-		}
+		fetchMore({
+			variables: { name },
+			updateQuery
+		});
 	};
 
 	const handleClick = ({currentTarget}, data) => {
@@ -97,12 +89,13 @@ const DirectorsTable = () => {
 	};
 
 	const handleEdit = () => {
-		changeDirFormOpenState();
+		onOpen();
 		handleClose();
 	};
 
 	const handleDirFormClose = () => {
-		changeDirFormOpenState();
+		setDialogState({...dialogState, data: {}});
+		onClose();
 	};
 
 	const handleDelete = () => {
@@ -122,8 +115,14 @@ const DirectorsTable = () => {
 				/>
 			</Paper>
 			<DirectorsForm
-				selectedValue={{name: activeElem.name, age: activeElem.age, id: activeElem.id}}
-				open={isDirFormOpen}
+				selectedValue={
+					{
+						name: (activeElem.name) ? activeElem.name : '',
+						age: (activeElem.age) ? activeElem.age : '',
+						id: (activeElem.id) ? activeElem.id : null
+					}
+				}
+				open={open}
 				onClose={handleDirFormClose} />
 			<DirectorsDialog open={isOpenDialogState} handleClose={changeDialogOpenState} id={activeElem.id}/>
 			<Paper className={styles.root}>
