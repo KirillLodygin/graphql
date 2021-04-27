@@ -48,6 +48,7 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 		variables: { name: '' },
 		notifyOnNetworkStatusChange: true
 	});
+
 	const {movies = []} = data;
 	movies.forEach(movie => {
 		if (movie.director === null) delMovie({variables:{id: movie.id}});
