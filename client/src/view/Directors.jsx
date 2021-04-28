@@ -28,9 +28,7 @@ const Directors = () => {
 	};
 
 	const handleClickClose = () => {
-		setState({
-			open: false
-		});
+		setState({open: false});
 	};
 
 	const { open } = state;

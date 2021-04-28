@@ -9,6 +9,7 @@ import {
 	TableRow,
 	Checkbox,
 	IconButton,
+	Button,
 	MenuItem,
 	Menu,
 	CircularProgress
@@ -152,7 +153,9 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 									<TableCell>Genre</TableCell>
 									<TableCell align="left">Rate</TableCell>
 									<TableCell>Director</TableCell>
-									<TableCell>Watched</TableCell>
+									<TableCell>
+										<Button>Watched</Button>
+									</TableCell>
 									<TableCell align="right"></TableCell>
 								</TableRow>
 							</TableHead>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
 import {DeleteForever, Block} from '@material-ui/icons';
-import { useMutation } from "@apollo/client";
+import {useMutation} from "@apollo/client";
 import { DELETE_DIRECTOR_MUTATION } from "../mutations/directorsMutations";
 import { DIRECTORS_QUERY } from '../queries/directorsQuery';
 import { MOVIES_QUERY } from '../queries/moviesQuery';

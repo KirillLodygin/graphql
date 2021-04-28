@@ -15,3 +15,19 @@ query moviesQuery($name: String) {
     }
   }
 `;
+
+export const WATCHED_QUERY = gql`
+query watched_moviesQuery($watched: Boolean, $name: String) {
+    watched_movies(watched: $watched, name: $name) {
+        id
+      name
+      genre
+      watched
+      rate
+      director {
+        name
+        id
+      }
+    }
+}
+`;
