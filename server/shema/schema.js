@@ -161,13 +161,6 @@ const Query = new GraphQLObjectType({
 				return Movies.find({ name: { $regex: name, $options: "i" } });
 			}
 		},
-		watched_movies: {
-			type: new GraphQLList(MovieType),
-			args: { watched: { type: GraphQLBoolean } },
-			resolve(parent, { watched }, { name }) {
-				return Movies.find({ watched }, { name: { $regex: name, $options: "i" } });
-			}
-		},
 		directors: {
 			type: new GraphQLList(DirectorType),
 			args: { name: { type: GraphQLString } },

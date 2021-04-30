@@ -7,12 +7,17 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
-	Checkbox,
 	IconButton,
-	Button,
 	MenuItem,
+	Checkbox,
 	Menu,
-	CircularProgress
+	CircularProgress,
+	RadioGroup,
+	Radio,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
+	Typography
 } from '@material-ui/core';
 import {MoreVert, Delete, Create} from '@material-ui/icons';
 import {useQuery, useMutation} from "@apollo/client";
@@ -35,11 +40,27 @@ const useStyles = makeStyles((theme) => ({
 	},
 	loading: {
 		margin: theme.spacing(4),
+	},
+	watchedCell: {
+		marginTop: '45px'
+	},
+	formControlLabel: {
+		fontSize: '0.7rem',
+		'& label': { fontSize: '0.5rem' }
 	}
 }));
 
 const MoviesTable = ({directors, onClose, onOpen, open}) => {
 	const styles = useStyles();
+
+	const [dialogState, setDialogState] = useState(
+		{
+			anchorEl: null,
+			name: '',
+			films: 'all'
+		}
+	);
+
 	const[delMovie] = useMutation(DELETE_MOVIE_MUTATION, {
 		optimisticResponse: true,
 		awaitRefetchQueries: true,
@@ -51,22 +72,20 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 	});
 
 	const {movies = []} = data;
+
 	movies.forEach(movie => {
 		if (movie.director === null) delMovie({variables:{id: movie.id}});
 	});
 
 	const [openDialogState, setOpenDialogState] = useState(false);
 
+	const btnHandleChange = (event) => {
+		setDialogState({...dialogState, films: event.target.value});
+	}
+
 	const changeDialogOpenState = () => {
 		setOpenDialogState(!openDialogState);
 	};
-
-	const [dialogState, setDialogState] = useState(
-		{
-			anchorEl: null,
-			name: ''
-		}
-	);
 
 	const handleChange = name => (event) => {
 		setDialogState({
@@ -85,7 +104,6 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 			updateQuery
 		});
 	};
-
 
 	const handleClick = ({currentTarget}, data) => {
 		setDialogState({
@@ -114,7 +132,7 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 		handleClose();
 	};
 
-	const {anchorEl, name, data: activeElem = {}} = dialogState;
+	const {anchorEl, name, films, data: activeElem = {}} = dialogState;
 
 	return (
 		<>
@@ -154,21 +172,45 @@ const MoviesTable = ({directors, onClose, onOpen, open}) => {
 									<TableCell align="left">Rate</TableCell>
 									<TableCell>Director</TableCell>
 									<TableCell>
-										<Button>Watched</Button>
+										<FormControl
+											component="fieldset"
+											className={styles.watchedCell}
+										>
+											<FormLabel component="genre">Watched</FormLabel>
+											<RadioGroup row
+														aria-label="films"
+														name="films"
+														value={films}
+														onChange={btnHandleChange}
+											>
+												<FormControlLabel value="all" control={<Radio />} label={<Typography className={styles.formControlLabel}>All</Typography>} />
+												<FormControlLabel value="watched"  control={<Radio />} label={<Typography className={styles.formControlLabel}>Watched</Typography>} />
+												<FormControlLabel value="unwatched" control={<Radio />} label={<Typography className={styles.formControlLabel}>Unwatched</Typography>} />
+											</RadioGroup>
+										</FormControl>
 									</TableCell>
 									<TableCell align="right"></TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{movies.filter(movie => movie.director !== null).map(movie => {
+								{movies.filter((movie) => {
+									if (films === 'all') {
+										return  movie.director !== null
+									} else {
+										if ( movie.director !== null) {
+											return movie.watched === (films === "watched")
+										}
+									}
+								}).map(movie => {
 									return (
 										<TableRow key={movie.id}>
 											<TableCell component="th" scope="row">{movie.name}</TableCell>
-											<TableCell>{(movie.genre) ? movie.genre.join(', ') : ''}</TableCell>
+											<TableCell>{(!movie.genre) ? '' :
+												movie.genre.map(genre => <div key={genre}>{genre}</div>)}</TableCell>
 											<TableCell align="left">{movie.rate}</TableCell>
 											<TableCell>{movie.director.name}</TableCell>
 											<TableCell>
-												<Checkbox checked={movie.watched} disabled/>
+												<Checkbox checked={movie.watched} disabled />
 											</TableCell>
 											<TableCell align="right">
 												<>
