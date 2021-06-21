@@ -29,8 +29,12 @@ const SimpleTabs = ({theme}) => {
 	const [state, setState] = useState({value: 0});
 	const {value} = state;
 
-	const handleChange = (e, value) => { setState({value}) };
-	const handleChangeIndex = (index) => { setState({value: index}) };
+	const handleChange = (e, value) => {
+    setState({ value });
+  };
+  const handleChangeIndex = index => {
+    setState({ value: index });
+  };
 
 	return (
 		<div className={styles.root}>
